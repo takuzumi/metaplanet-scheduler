@@ -1,0 +1,27 @@
+name: Write to Google Sheets
+
+on:
+  schedule:
+    - cron: '0 0 * * *'  # 毎日0:00 UTCに実行（日本時間9:00）
+  workflow_dispatch:     # 手動実行も許可
+
+jobs:
+  run-script:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v3
+
+      - name: Set up Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install dependencies
+        run: pip install -r requirements.txt
+
+      - name: Write credentials.json from secret
+        run: echo "${{ secrets.GOOGLE_CREDENTIALS_JSON }}" > credentials.json
+
+      - name: Run Python script
+        run: python script.py
